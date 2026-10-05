@@ -4,6 +4,10 @@ Built for a friend who teaches evening classes. Parents message about fees, clas
 
 Gemma, hosted by Google, reads the message. MongoDB Atlas keeps the calls. ElevenLabs speaks the reply. Sentry records the agent trace.
 
+## Demo
+
+[Watch the walkthrough](https://youtu.be/Uakq0zQBerw)
+
 ## Architecture
 
 The teacher pastes a parent message in the browser. FastAPI sends it to the agent. Gemma decides the topic, priority, and the words to say. Atlas stores the call, ElevenLabs speaks those words, and the page plays the audio.
@@ -62,7 +66,7 @@ The Sentry conversation for that run is “Class link not working for child.” 
 
 ## Environment
 
-Copy the keys into `.env`. Do not commit that file.
+Copy `.env.example` to `.env` and fill in the keys. Do not commit `.env`.
 
 - `GEMINI_API_KEY` — Google AI Studio key. The app calls hosted `gemma-4-26b-a4b-it`, so no model is downloaded.
 - `ELEVENLABS_API_KEY`
