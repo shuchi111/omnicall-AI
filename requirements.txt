@@ -1,0 +1,8 @@
+fastapi
+uvicorn
+elevenlabs
+pymongo
+requests
+python-dotenv
+sentry-sdk
+pydantic
