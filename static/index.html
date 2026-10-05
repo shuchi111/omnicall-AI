@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>OmniCall</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,560&family=Outfit:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --paper: #f3efe6;
+      --ink: #241f1a;
+      --muted: #6f675e;
+      --line: #ddd4c6;
+      --speaker: #2c241c;
+      --speaker-ink: #f6f1e8;
+      --accent: #9a4e24;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      color: var(--ink);
+      background: var(--paper);
+      font-family: Outfit, "Segoe UI", sans-serif;
+    }
+
+    main {
+      width: min(720px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 48px 0 72px;
+    }
+
+    h1 {
+      margin: 0;
+      font-family: Fraunces, Georgia, serif;
+      font-size: clamp(2.4rem, 6vw, 3.6rem);
+      font-weight: 560;
+      letter-spacing: -0.03em;
+    }
+
+    .lede {
+      margin: 10px 0 28px;
+      color: var(--muted);
+      font-size: 1.05rem;
+      line-height: 1.6;
+    }
+
+    .lede span {
+      display: block;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-size: 0.78rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    textarea {
+      width: 100%;
+      min-height: 150px;
+      resize: vertical;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 14px;
+      color: var(--ink);
+      background: #fffdf8;
+      font: 1.05rem/1.5 Outfit, "Segoe UI", sans-serif;
+    }
+
+    textarea:focus {
+      outline: 2px solid rgba(154, 78, 36, 0.35);
+      border-color: transparent;
+    }
+
+    .examples {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin: 14px 0 18px;
+    }
+
+    button {
+      border: 0;
+      cursor: pointer;
+      font: 600 0.95rem Outfit, "Segoe UI", sans-serif;
+    }
+
+    .examples button {
+      color: var(--ink);
+      background: transparent;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 7px 12px;
+    }
+
+    .actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    #submit {
+      background: var(--accent);
+      color: #fff8f3;
+      border-radius: 12px;
+      padding: 12px 16px;
+    }
+
+    #submit:disabled { opacity: 0.6; cursor: progress; }
+
+    .hint { color: var(--muted); }
+
+    .reply {
+      display: none;
+      margin-top: 28px;
+    }
+
+    .reply.visible { display: block; }
+
+    .heard {
+      margin: 0 0 14px;
+      font-family: Fraunces, Georgia, serif;
+      font-size: 1.7rem;
+      line-height: 1.25;
+    }
+
+    .speaker {
+      padding: 16px;
+      border-radius: 16px;
+      background: var(--speaker);
+      color: var(--speaker-ink);
+    }
+
+    .speaker p {
+      margin: 0 0 10px;
+      font-size: 0.78rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    audio { width: 100%; }
+
+    .spoken {
+      margin: 14px 0 0;
+      line-height: 1.55;
+    }
+
+    .saved {
+      margin: 10px 0 0;
+      color: var(--muted);
+      font-size: 0.92rem;
+    }
+
+    .error {
+      margin-top: 18px;
+      color: #8d2f24;
+    }
+
+    .history { margin-top: 40px; }
+
+    .history h2 {
+      margin: 0 0 8px;
+      font-family: Fraunces, Georgia, serif;
+      font-size: 1.6rem;
+      font-weight: 560;
+    }
+
+    .empty { color: var(--muted); line-height: 1.5; }
+
+    .call {
+      padding: 14px 0;
+      border-top: 1px solid var(--line);
+    }
+
+    .call strong { font-family: Fraunces, Georgia, serif; font-size: 1.15rem; }
+
+    .call p { margin: 4px 0 0; color: var(--muted); }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>OmniCall</h1>
+    <p class="lede">
+      <span>For a friend who teaches evening classes.</span>
+      <span>Parents message during class.</span>
+      <span>Paste the message, hear how urgent it is, and hear the reply to send back.</span>
+    </p>
+
+    <label for="transcript">What the parent wrote</label>
+    <textarea id="transcript">I paid this month's class fees twice. Please refund the extra payment today.</textarea>
+    <div class="examples">
+      <button type="button" data-sample="I paid this month's class fees twice. Please refund the extra payment today.">Fees</button>
+      <button type="button" data-sample="The class link is not working and my child cannot join. This is urgent.">Class link</button>
+      <button type="button" data-sample="Please cancel my child's enrollment before the next fee is charged.">Leaving class</button>
+      <button type="button" data-sample="I forgot the parent portal password and I am locked out.">Login</button>
+      <button type="button" data-sample="The worksheets were supposed to arrive yesterday and the tracking has not moved.">Materials</button>
+      <button type="button" data-sample="The class website is down and none of the students can join. This is an emergency.">Site down</button>
+      <button type="button" data-sample="How do I update the email on my child's profile?">Email</button>
+      <button type="button" data-sample="I am frustrated. I was charged twice for fees and I will leave the class if this is not fixed today.">Angry parent</button>
+    </div>
+    <div class="actions">
+      <button id="submit" type="button">Hear the reply</button>
+      <span class="hint" id="status"></span>
+    </div>
+
+    <section class="reply" id="reply" aria-live="polite">
+      <p class="heard" id="heard"></p>
+      <div class="speaker">
+        <p>Say this</p>
+        <audio id="audio" controls></audio>
+      </div>
+      <p class="spoken" id="spoken"></p>
+      <p class="saved" id="saved"></p>
+    </section>
+    <p class="error" id="error" hidden></p>
+
+    <section class="history">
+      <h2>Calls from now on</h2>
+      <div id="history" class="empty">Nothing here until you hear a reply.</div>
+    </section>
+  </main>
+
+  <script>
+    const transcript = document.querySelector("#transcript");
+    const submit = document.querySelector("#submit");
+    const status = document.querySelector("#status");
+    const reply = document.querySelector("#reply");
+    const heard = document.querySelector("#heard");
+    const audio = document.querySelector("#audio");
+    const spoken = document.querySelector("#spoken");
+    const saved = document.querySelector("#saved");
+    const error = document.querySelector("#error");
+
+    document.querySelectorAll("[data-sample]").forEach((button) => {
+      button.addEventListener("click", () => {
+        transcript.value = button.dataset.sample;
+      });
+    });
+
+    function escapeHtml(value) {
+      return String(value)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;");
+    }
+
+    function words(value) {
+      return String(value || "general inquiry").replaceAll("_", " ");
+    }
+
+    function showError(message) {
+      reply.classList.remove("visible");
+      error.hidden = false;
+      error.textContent = message;
+    }
+
+    submit.addEventListener("click", async () => {
+      const text = transcript.value.trim();
+      if (!text) {
+        showError("Paste the parent's message first.");
+        return;
+      }
+
+      submit.disabled = true;
+      status.textContent = "Gemma is reading it...";
+      error.hidden = true;
+
+      try {
+        const response = await fetch("/api/support", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ text }),
+        });
+        const payload = await response.json();
+        if (!response.ok) {
+          throw new Error(payload.detail || "The reply could not be made.");
+        }
+
+        const analysis = payload.intent_analysis || {};
+        const topics = {
+          billing: "fees",
+          technical_support: "the class link",
+          account: "the parent login",
+          cancellation: "leaving the class",
+          order_status: "class materials",
+          general_inquiry: "a question",
+        };
+        const topic = topics[analysis.intent] || words(analysis.intent);
+        heard.textContent = `This is about ${topic}. ${words(analysis.priority)} priority.`;
+        spoken.textContent = analysis.resolution_summary || analysis.summary || "";
+        saved.textContent = payload.database_status && payload.database_status.startsWith("logged")
+          ? "Saved, so you can come back to this call."
+          : "The reply is ready. It was not saved.";
+        audio.src = `data:audio/mpeg;base64,${payload.audio_base64}`;
+        reply.classList.add("visible");
+        audio.play().catch(() => {});
+        status.textContent = "";
+        loadHistory();
+      } catch (err) {
+        showError(err.message || "Could not reach OmniCall.");
+        status.textContent = "";
+      } finally {
+        submit.disabled = false;
+      }
+    });
+
+    function loadHistory() {
+      const history = document.querySelector("#history");
+      fetch("/api/support/logs")
+        .then((response) => response.json())
+        .then((payload) => {
+          const calls = payload.calls || [];
+          if (!calls.length) {
+            history.className = "empty";
+            history.textContent = "Nothing here until you hear a reply.";
+            return;
+          }
+          history.className = "";
+          history.innerHTML = calls.map((call) => `
+            <article class="call">
+              <strong>${escapeHtml(words(call.priority))} priority</strong>
+              <p>${escapeHtml(call.transcript_text || "")}</p>
+            </article>
+          `).join("");
+        })
+        .catch(() => {
+          history.className = "empty";
+          history.textContent = "Saved calls could not be loaded.";
+        });
+    }
+
+    loadHistory();
+  </script>
+</body>
+</html>
